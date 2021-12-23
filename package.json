@@ -1,0 +1,16 @@
+{
+  "name": "pocketletter",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:BYK/pocketletter.git",
+  "author": "Burak Yigit Kaya <ben@byk.im>",
+  "license": "Apache-2.0",
+  "private": true,
+  "devDependencies": {
+    "@cloudflare/workers-types": "^3.3.0",
+    "prettier": "^2.5.1"
+  },
+  "volta": {
+    "node": "12.18.0"
+  }
+}
