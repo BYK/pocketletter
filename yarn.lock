@@ -7,6 +7,26 @@
   resolved "https://registry.yarnpkg.com/@cloudflare/workers-types/-/workers-types-3.3.0.tgz#a05cf8e27bf007a93c6437bf22daa616b1b5fc42"
   integrity sha512-3v3bm/hOuzNtHgDqPowrRE63H0GEn40LfhLMVpzS5yeg5tlE5nEQ0qobmGOJBCvJJ1LhgRRHZTJszXHs1DXQWg==
 
+"@tsconfig/node12@^1.0.9":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@tsconfig/node12/-/node12-1.0.9.tgz#62c1f6dee2ebd9aead80dc3afa56810e58e1a04c"
+  integrity sha512-/yBMcem+fbvhSREH+s14YJi18sp7J9jpuhYByADT2rypfajMZZN4WQ6zBGgBKp53NKmqI36wFYDb3yaMPurITw==
+
+"@types/node@12.0.0":
+  version "12.0.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.0.0.tgz#d11813b9c0ff8aaca29f04cbc12817f4c7d656e5"
+  integrity sha512-Jrb/x3HT4PTJp6a4avhmJCDEVrPdqLfl3e8GGMbpkGGdwAV5UGlIs4vVEfsHHfylZVOKZWpOqmqFH8CbfOZ6kg==
+
+"@types/uuid@^8.3.3":
+  version "8.3.3"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.3.tgz#c6a60686d953dbd1b1d45e66f4ecdbd5d471b4d0"
+  integrity sha512-0LbEEx1zxrYB3pgpd1M5lEhLcXjKJnYghvhTRgaBeUivLHMDM1TzF3IJ6hXU2+8uA4Xz+5BA63mtZo5DjVT8iA==
+
+crc@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/crc/-/crc-4.0.0.tgz#49d97bba62bbe97a0018d9d109ab2540f81a3b5a"
+  integrity sha512-MFJnrsPVGMW9NkRO+BNquPNqTTvblLQ49VoSJSUdVSqlqJ+SLJylxsfuvNNlDNkoGwbR/2nO0T8rgUTv7HxUyg==
+
 prettier@^2.5.1:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.5.1.tgz#fff75fa9d519c54cf0fce328c1017d94546bc56a"

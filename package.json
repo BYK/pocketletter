@@ -6,11 +6,18 @@
   "author": "Burak Yigit Kaya <ben@byk.im>",
   "license": "Apache-2.0",
   "private": true,
+  "type": "module",
   "devDependencies": {
     "@cloudflare/workers-types": "^3.3.0",
+    "@tsconfig/node12": "^1.0.9",
+    "@types/node": "12.0.0",
+    "@types/uuid": "^8.3.3",
     "prettier": "^2.5.1"
   },
   "volta": {
     "node": "12.18.0"
+  },
+  "dependencies": {
+    "crc": "^4.0.0"
   }
 }
