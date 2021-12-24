@@ -38,10 +38,10 @@ const parseUUID = (uuid: string): Uint8Array => {
  * Convert array of 16 byte values to UUID string format of the form:
  * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
  */
-const byteToHex: number[] = [];
+const byteToHex: string[] = [];
 
 for (let i = 0; i < 256; ++i) {
-  byteToHex.push((i + 0x100).toString(16).substr(1));
+  byteToHex.push((i + 0x100).toString(16).substring(1));
 }
 
 export const stringifyUUID = (arr: number[], offset = 0): string => {
