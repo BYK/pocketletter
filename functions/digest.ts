@@ -1,5 +1,5 @@
 import {POCKET_ADD_URL} from "../constants";
-import {signature, decrypt} from "../cryptoUtils";
+import {signature, decrypt} from "../crypto";
 
 const makeHTML = (title: string, body: string) =>
   `<!DOCTYPE html>\n<html><head><meta charset="utf-8"/><title>${title}</title></head><body>${body}</body></html>`;
