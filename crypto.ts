@@ -78,8 +78,7 @@ export const encrypt = (token: string, key: string): string => {
   const xored = new Uint8Array(17);
   parseUUID(padded).forEach((x, i) => (xored[i] = x ^ binKey[i]));
   xored[16] = crc8(xored.subarray(0, 16));
-  var decoder = new TextDecoder("utf8");
-  return btoa(decoder.decode(xored));
+  return btoa(String.fromCharCode(...xored));
 };
 
 export const decrypt = (token: string, key: string): string => {
