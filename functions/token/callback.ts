@@ -1,5 +1,5 @@
 import {POCKET_OAUTH_AUTHORIZE_URL, CODE_COOKIE_NAME} from "../../constants";
-import {encrypt} from "../../crypto";
+import {encrypt} from "../../cryptoUtils";
 
 export const onRequest: PagesFunction<{
   POCKET_CONSUMER_KEY: string;
