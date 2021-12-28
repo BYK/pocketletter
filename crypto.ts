@@ -95,13 +95,7 @@ export const decrypt = (token: string, key: string): string => {
   return stringifyUUID(data.map((x, i) => x ^ binKey[i])).replace(/0+$/, "");
 };
 
-export const signature = async ({
-  data: data,
-  signingKey: signingKey,
-}: {
-  data: string;
-  signingKey: string;
-}) => {
+export const signature = async (data: string, signingKey: string) => {
   const encoder = new TextEncoder();
   const secretKeyData = encoder.encode(signingKey);
   const key = await crypto.subtle.importKey(

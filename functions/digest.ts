@@ -23,7 +23,7 @@ export const onRequest: PagesFunction<{
     "@",
     1,
   );
-  const fileName = `${signature(html, env.SIGNING_SECRET)}.html`;
+  const fileName = `${await signature(html, env.SIGNING_SECRET)}.html`;
   const pocketToken = decrypt(fromName, env.POCKET_TOKEN_KEY);
 
   // direct_link = BrowserLinkGetter()
