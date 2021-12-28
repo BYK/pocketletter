@@ -1,7 +1,6 @@
-import {createHmac} from "crypto";
 import crc8 from "crc/lib/es6/calculators/crc8";
 
-const getCRC8 = (data: number[]): number => crc8(new Int8Array(data));
+const getCRC8 = (data: number[]): number => crc8(new Uint8Array(data));
 
 // Copied from https://github.com/uuidjs/uuid/blob/3a033f6bab6bb3780ece6d645b902548043280bc/src/parse.js
 // Just removed the validator as we don't care about that (and Pocket access tokens violate that)
@@ -96,8 +95,24 @@ export const decrypt = (token: string, key: string): string => {
   return stringifyUUID(data.map((x, i) => x ^ binKey[i])).replace(/0+$/, "");
 };
 
-export const signature = (contents: string, secret: string) => {
-  const hmac = createHmac("sha256", secret);
-  hmac.update("some data to hash");
-  return hmac.digest("hex");
+export const signature = async ({
+  data: data,
+  signingKey: signingKey,
+}: {
+  data: string;
+  signingKey: string;
+}) => {
+  const encoder = new TextEncoder();
+  const secretKeyData = encoder.encode(signingKey);
+  const key = await crypto.subtle.importKey(
+    "raw",
+    secretKeyData,
+    {name: "HMAC", hash: "SHA-256"},
+    false,
+    ["sign"],
+  );
+
+  // Generate the signature
+  const mac = await crypto.subtle.sign("HMAC", key, encoder.encode(data));
+  return Buffer.from(mac).toString("hex");
 };
