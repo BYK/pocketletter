@@ -1,7 +1,5 @@
 import crc8 from "crc/lib/es6/calculators/crc8";
 
-const getCRC8 = (data: number[]): number => crc8(new Uint8Array(data));
-
 // Copied from https://github.com/uuidjs/uuid/blob/3a033f6bab6bb3780ece6d645b902548043280bc/src/parse.js
 // Just removed the validator as we don't care about that (and Pocket access tokens violate that)
 const parseUUID = (uuid: string): Uint8Array => {
@@ -43,7 +41,7 @@ for (let i = 0; i < 256; ++i) {
   byteToHex.push((i + 0x100).toString(16).substring(1));
 }
 
-export const stringifyUUID = (arr: number[], offset = 0): string => {
+export const stringifyUUID = (arr: Uint8Array, offset = 0): string => {
   // Note: Be careful editing this code!  It's been tuned for performance
   // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
   return (
@@ -77,9 +75,11 @@ export const encrypt = (token: string, key: string): string => {
   if (binKey.length !== 16) {
     throw new Error(`Invalid key length: ${binKey.length}`);
   }
-  const xored = Array.from(parseUUID(padded), (x, i) => x ^ binKey[i]);
-  xored.push(getCRC8(xored));
-  return Buffer.from(xored).toString("base64");
+  const xored = new Uint8Array(17);
+  parseUUID(padded).forEach((x, i) => (xored[i] = x ^ binKey[i]));
+  xored[16] = crc8(xored.subarray(0, 16));
+  var decoder = new TextDecoder("utf8");
+  return btoa(decoder.decode(xored));
 };
 
 export const decrypt = (token: string, key: string): string => {
@@ -87,13 +87,18 @@ export const decrypt = (token: string, key: string): string => {
   if (binKey.length !== 16) {
     throw new Error(`Invalid key length: ${binKey.length}`);
   }
-  const data = Array.from(Buffer.from(token, "base64"));
-  const checksum = data.pop();
-  if (checksum !== getCRC8(data)) {
+  const data = Uint8Array.from(atob(token), (c) => c.charCodeAt(0));
+  const checksum = data[16];
+  if (checksum !== crc8(data.subarray(0, 16))) {
     throw new Error("Checksum error.");
   }
   return stringifyUUID(data.map((x, i) => x ^ binKey[i])).replace(/0+$/, "");
 };
+
+const bufferToHex = (buffer: ArrayBuffer): string =>
+  [...new Uint8Array(buffer)]
+    .map((x) => x.toString(16).padStart(2, "0"))
+    .join("");
 
 export const signature = async (data: string, signingKey: string) => {
   const encoder = new TextEncoder();
@@ -108,5 +113,5 @@ export const signature = async (data: string, signingKey: string) => {
 
   // Generate the signature
   const mac = await crypto.subtle.sign("HMAC", key, encoder.encode(data));
-  return Buffer.from(mac).toString("hex");
+  return bufferToHex(new Uint8Array(mac).buffer);
 };

@@ -15,7 +15,7 @@
     "prettier": "^2.5.1"
   },
   "volta": {
-    "node": "12.18.0"
+    "node": "16.13.1"
   },
   "dependencies": {
     "crc": "^4.0.0"
