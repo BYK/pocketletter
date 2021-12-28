@@ -1,5 +1,5 @@
 import {createHmac} from "crypto";
-import crc8 from "crc/crc8";
+import crc8 from "crc/lib/es6/calculators/crc8";
 
 const getCRC8 = (data: number[]): number => crc8(new Int8Array(data));
 
