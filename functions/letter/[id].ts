@@ -7,7 +7,7 @@ export const onRequest: PagesFunction<{
   return new Response(data, {
     status: 200,
     headers: {
-      "Content-type": "text/html",
+      "Content-type": "text/html; charset=utf-8",
     },
   });
 };
