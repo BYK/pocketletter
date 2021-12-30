@@ -1,3 +1,5 @@
 node_modules
 .env
+# CF Pages Local Dev
+.mf
 build
