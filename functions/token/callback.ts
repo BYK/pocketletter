@@ -1,4 +1,8 @@
-import {POCKET_OAUTH_AUTHORIZE_URL, CODE_COOKIE_NAME} from "../../constants";
+import {
+  POCKET_OAUTH_AUTHORIZE_URL,
+  CODE_COOKIE_NAME,
+  MAILING_DOMAIN,
+} from "../../constants";
 import {encrypt} from "../../crypto";
 
 export const onRequest: PagesFunction<{
@@ -31,7 +35,7 @@ export const onRequest: PagesFunction<{
   const address = `${encrypt(
     access_token,
     env.POCKET_TOKEN_KEY,
-  )}@to.pocketletter.cc`;
+  )}@${MAILING_DOMAIN}`;
 
   return new Response(
     `Hi ${username}, your PocketLetter address is ${address}`,

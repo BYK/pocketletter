@@ -4,17 +4,23 @@ import {
   CODE_COOKIE_NAME,
 } from "../../constants";
 
-const REDIRECT_URI = "https://pocketletter.pages.dev/token/callback";
+const getRedirectURI = (request: Request) => {
+  const url = new URL(request.url);
+  url.pathname = "/token/callback";
+  url.search = "";
+  return url.toString();
+};
 
 export const onRequest: PagesFunction<{
   POCKET_CONSUMER_KEY: string;
-}> = async ({env}) => {
+}> = async ({request, env}) => {
+  const redirect_uri = getRedirectURI(request);
   const {code} = await (
     await fetch(POCKET_OAUTH_REQUEST_URL, {
       method: "POST",
       body: JSON.stringify({
+        redirect_uri,
         consumer_key: env.POCKET_CONSUMER_KEY,
-        redirect_uri: REDIRECT_URI,
       }),
       headers: {
         "content-type": "application/json;charset=UTF-8",
@@ -23,15 +29,15 @@ export const onRequest: PagesFunction<{
     })
   ).json();
 
-  const redirectUrl = new URL(POCKET_AUTH_URL);
-  redirectUrl.searchParams.append("request_token", code);
-  redirectUrl.searchParams.append("redirect_uri", REDIRECT_URI);
+  const pocketAuthUrl = new URL(POCKET_AUTH_URL);
+  pocketAuthUrl.searchParams.append("request_token", code);
+  pocketAuthUrl.searchParams.append("redirect_uri", redirect_uri);
 
   return new Response("", {
     status: 302,
     headers: {
       "Set-Cookie": `${CODE_COOKIE_NAME}=${code}; path=/token; secure; HttpOnly; SameSite=Lax`,
-      Location: redirectUrl.toString(),
+      Location: pocketAuthUrl.toString(),
     },
   });
 };

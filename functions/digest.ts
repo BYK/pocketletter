@@ -5,11 +5,6 @@ const makeHTML = (title: string, body: string) =>
   `<!DOCTYPE html>\n<html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>${title}</title></head><body>${body}</body></html>`;
 const SUBJECT_CLEANER = /^((Re|Fwd):\s*)+/i;
 
-const store = async (storage: KVNamespace, contents: string, name: string) => {
-  await storage.put(name, contents);
-  return `https://pocketletter.pages.dev/letter/${name}`;
-};
-
 export const onRequest: PagesFunction<{
   POCKET_CONSUMER_KEY: string;
   POCKET_TOKEN_KEY: string;
@@ -32,10 +27,14 @@ export const onRequest: PagesFunction<{
   //     url = direct_link.link
   //     print("Found direct link:", url)
   // else:
-  const url = await store(env.DATA, html, fileName);
+
+  await env.DATA.put(fileName, html);
+  const url = new URL(request.url);
+  url.pathname = `/letter/${fileName}`;
+  url.search = "";
 
   const postData = {
-    url,
+    url: url.toString(),
     title,
     access_token: pocketToken,
     consumer_key: env.POCKET_CONSUMER_KEY,
