@@ -55,14 +55,35 @@ class LinkFinder {
   }
 }
 
-async function extractDirectLink(html: string): Promise<string | null> {
+class Cleaner {
+  element(el: Element) {
+    el.remove();
+  }
+}
+
+class Unwrapper {
+  element(el: Element) {
+    el.removeAndKeepContent();
+  }
+}
+
+async function processHTML(
+  html: string,
+): Promise<{html: string; directLink: string | null}> {
   const res = new Response(html);
   const finder = new LinkFinder();
+  const cleaner = new Cleaner();
 
-  const sink = new HTMLRewriter().on('a[href^="http"]', finder).transform(res);
-  await sink.blob();
-
-  return finder.found ? (finder.href as string) : null;
+  const sink = new HTMLRewriter()
+    .on('a[href^="http"]', finder)
+    .on('[data-smartmail$="_signature"]', cleaner)
+    .on(".gmail_quote>.gmail_attr", cleaner)
+    .on(".gmail_quote", new Unwrapper())
+    .transform(res);
+  return {
+    html: await sink.text(),
+    directLink: finder.found ? (finder.href as string) : null,
+  };
 }
 
 async function storeLetter(
@@ -84,7 +105,7 @@ export const onRequest: PagesFunction<IPocketLetterEnv> = async ({
 }) => {
   const data = await request.formData();
   const title = (data.get("subject") as string).replace(SUBJECT_CLEANER, "");
-  const html = makeHTML(
+  const rawHtml = makeHTML(
     title,
     (data.get("html") as string) || textToHTML(data.get("text") as string),
   );
@@ -93,10 +114,9 @@ export const onRequest: PagesFunction<IPocketLetterEnv> = async ({
     1,
   );
   const pocketToken = decrypt(fromName, env.POCKET_TOKEN_KEY);
+  const {html, directLink} = await processHTML(rawHtml);
 
-  const url =
-    (await extractDirectLink(html)) ||
-    (await storeLetter({env, request}, html));
+  const url = directLink || (await storeLetter({env, request}, html));
   console.log("Saving url:", url);
 
   const postData = {
