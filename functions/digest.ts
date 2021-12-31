@@ -3,7 +3,7 @@ import {signature, decrypt} from "../crypto";
 
 const makeHTML = (title: string, body: string) =>
   `<!DOCTYPE html>\n<html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>${title}</title></head><body>${body}</body></html>`;
-const SUBJECT_CLEANER = /^((Re|Fwd|Fw):\s*)+/i;
+const SUBJECT_CLEANER = /^((Re|Fwd?):\s*)+/i;
 
 type IPocketLetterEnv = {
   POCKET_CONSUMER_KEY: string;
