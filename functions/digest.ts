@@ -122,6 +122,7 @@ export const onRequest: PagesFunction<IPocketLetterEnv> = async ({
   const postData = {
     url,
     title,
+    tags: "pocketletter",
     access_token: pocketToken,
     consumer_key: env.POCKET_CONSUMER_KEY,
   };
