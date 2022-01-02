@@ -21,7 +21,7 @@ type IPocketLetterEnv = {
 
 class LinkFinder {
   textMatcher =
-    /view (?:\w+ )*in (?:\w+ )*browser|(?:read|view) (?:\w+ )*online|view (?:\w+ )*as (?:a )?web ?page|webpage|Share/i;
+    /(?:read|view) (?:\w+ )*(?:browser|online|web(?: ?page)?)|webpage|Share/i;
   href: string | null = null;
   found = false;
   textBuffer: string[] = [];
