@@ -6,7 +6,7 @@ const errorHandler = async (event) => {
     dsn: env.SENTRY_DSN,
     // Includes 'waitUntil', which is essential for Sentry logs to be delivered. Also includes 'request' -- no need to set it separately.
     context: event,
-    allowedHeaders: ["user-agent"],
+    allowedHeaders: /(.*)/,
     env: "production",
   });
   event.data.sentry = sentry;
