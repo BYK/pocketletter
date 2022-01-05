@@ -1,3 +1,4 @@
+import Toucan from "toucan-js";
 import {POCKET_ADD_URL} from "../constants";
 import {signature, decrypt} from "../crypto";
 
@@ -100,19 +101,25 @@ async function storeLetter(
 }
 
 export const onRequest: PagesFunction<IPocketLetterEnv> = async ({
+  data,
   request,
   env,
 }) => {
-  const data = await request.formData();
-  const title = (data.get("subject") as string).replace(SUBJECT_CLEANER, "");
+  const formData = await request.formData();
+  const title = (formData.get("subject") as string).replace(
+    SUBJECT_CLEANER,
+    "",
+  );
   const rawHtml = makeHTML(
     title,
-    (data.get("html") as string) || textToHTML(data.get("text") as string),
+    (formData.get("html") as string) ||
+      textToHTML(formData.get("text") as string),
   );
-  const [fromName] = JSON.parse(data.get("envelope") as string)["to"][0].split(
-    "@",
-    1,
-  );
+  const [fromName] = JSON.parse(formData.get("envelope") as string)[
+    "to"
+  ][0].split("@", 1);
+  (data.sentry as Toucan).setUser({id: fromName});
+
   const pocketToken = decrypt(fromName, env.POCKET_TOKEN_KEY);
   const {html, directLink} = await processHTML(rawHtml);
 
