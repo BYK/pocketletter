@@ -105,7 +105,9 @@ export const onRequest: PagesFunction<IPocketLetterEnv> = async ({
   request,
   env,
 }) => {
+  const sentry = data.sentry as Toucan;
   const formData = await request.formData();
+  sentry.setRequestBody(JSON.stringify(Object.fromEntries(formData)));
   const title = (formData.get("subject") as string).replace(
     SUBJECT_CLEANER,
     "",
@@ -118,7 +120,7 @@ export const onRequest: PagesFunction<IPocketLetterEnv> = async ({
   const [fromName] = JSON.parse(formData.get("envelope") as string)[
     "to"
   ][0].split("@", 1);
-  (data.sentry as Toucan).setUser({id: fromName});
+  sentry.setUser({id: fromName});
 
   const pocketToken = decrypt(fromName, env.POCKET_TOKEN_KEY);
   const {html, directLink} = await processHTML(rawHtml);
