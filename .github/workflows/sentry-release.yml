@@ -1,0 +1,22 @@
+name: Sentry Release
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  sentry_release:
+    name: Create Sentry Release
+    runs-on: ubuntu-latest
+    steps:
+      # We actually do not need to checkout but for some reason GHA fails all `run` steps
+      # withous a checkout. See https://stackoverflow.com/a/65027251/90297
+      - uses: actions/checkout@v2
+      - name: Create Sentry Release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_ORG: byk
+          SENTRY_PROJECT: pocketletter
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        with:
+          environment: production
