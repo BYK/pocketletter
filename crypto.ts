@@ -68,19 +68,6 @@ export const stringifyUUID = (arr: Uint8Array, offset = 0): string => {
   ).toLowerCase();
 };
 
-export const encrypt = (token: string, key: string): string => {
-  const binKey = parseUUID(key);
-  const missingChars = 36 - token.length; // Pad for valid UUID length
-  const padded = token + "0".repeat(missingChars);
-  if (binKey.length !== 16) {
-    throw new Error(`Invalid key length: ${binKey.length}`);
-  }
-  const xored = new Uint8Array(17);
-  parseUUID(padded).forEach((x, i) => (xored[i] = x ^ binKey[i]));
-  xored[16] = crc8(xored.subarray(0, 16));
-  return btoa(String.fromCharCode(...xored));
-};
-
 export const decrypt = (token: string, key: string): string => {
   const binKey = parseUUID(key);
   if (binKey.length !== 16) {
