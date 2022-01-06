@@ -115,9 +115,14 @@ export const onRequest: PagesFunction<IPocketLetterEnv> = async ({
   ][0].split("@", 1);
   sentry.setUser({id: fromName});
 
-  const access_token =
-    (await env.ALIASES.get(fromName.toLowerCase())) ||
-    decrypt(fromName, env.POCKET_TOKEN_KEY);
+  const aliasKey = fromName.toLowerCase();
+  const alias = await env.ALIASES.get(aliasKey);
+  const access_token = alias || decrypt(fromName, env.POCKET_TOKEN_KEY);
+
+  // Migrate away from encrypted tokens in addresses
+  if (!alias) {
+    await env.ALIASES.put(aliasKey, access_token);
+  }
 
   const {html, directLink} = await processHTML(rawHtml);
 
