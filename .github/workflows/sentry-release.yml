@@ -2,7 +2,7 @@ name: Sentry Release
 
 on:
   push:
-    branches: [main]
+    branches: ["main"]
 
 jobs:
   sentry_release:
