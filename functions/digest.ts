@@ -18,6 +18,7 @@ type IPocketLetterEnv = {
   POCKET_TOKEN_KEY: string;
   SIGNING_SECRET: string;
   DATA: KVNamespace;
+  ALIASES: KVNamespace;
 };
 
 class LinkFinder {
@@ -122,7 +123,9 @@ export const onRequest: PagesFunction<IPocketLetterEnv> = async ({
   ][0].split("@", 1);
   sentry.setUser({id: fromName});
 
-  const pocketToken = decrypt(fromName, env.POCKET_TOKEN_KEY);
+  const resolvedName = (await env.ALIASES.get(fromName)) || fromName;
+
+  const pocketToken = decrypt(resolvedName, env.POCKET_TOKEN_KEY);
   const {html, directLink} = await processHTML(rawHtml);
 
   const url = directLink || (await storeLetter({env, request}, html));
