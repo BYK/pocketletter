@@ -1,5 +1,5 @@
 import Toucan from "toucan-js";
-import {POCKET_ADD_URL} from "../constants";
+import {POCKET_ADD_URL, IPocketLetterEnv} from "../constants";
 import {signature, decrypt} from "../crypto";
 
 // Adapted from https://stackoverflow.com/a/66481918/90297
@@ -12,14 +12,6 @@ const textToHTML = (text: string): string =>
 const makeHTML = (title: string, body: string) =>
   `<!DOCTYPE html>\n<html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>${title}</title></head><body>${body}</body></html>`;
 const SUBJECT_CLEANER = /^((Re|Fwd?):\s*)+/i;
-
-type IPocketLetterEnv = {
-  POCKET_CONSUMER_KEY: string;
-  POCKET_TOKEN_KEY: string;
-  SIGNING_SECRET: string;
-  DATA: KVNamespace;
-  ALIASES: KVNamespace;
-};
 
 class LinkFinder {
   textMatcher =
@@ -123,9 +115,10 @@ export const onRequest: PagesFunction<IPocketLetterEnv> = async ({
   ][0].split("@", 1);
   sentry.setUser({id: fromName});
 
-  const resolvedName = (await env.ALIASES.get(fromName)) || fromName;
+  const access_token =
+    (await env.ALIASES.get(fromName)) ||
+    decrypt(fromName, env.POCKET_TOKEN_KEY);
 
-  const pocketToken = decrypt(resolvedName, env.POCKET_TOKEN_KEY);
   const {html, directLink} = await processHTML(rawHtml);
 
   const url = directLink || (await storeLetter({env, request}, html));
@@ -134,8 +127,8 @@ export const onRequest: PagesFunction<IPocketLetterEnv> = async ({
   const postData = {
     url,
     title,
+    access_token,
     tags: "pocketletter",
-    access_token: pocketToken,
     consumer_key: env.POCKET_CONSUMER_KEY,
   };
 

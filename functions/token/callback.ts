@@ -2,13 +2,13 @@ import {
   POCKET_OAUTH_AUTHORIZE_URL,
   CODE_COOKIE_NAME,
   MAILING_DOMAIN,
+  IPocketLetterEnv,
 } from "../../constants";
-import {encrypt} from "../../crypto";
 
-export const onRequest: PagesFunction<{
-  POCKET_CONSUMER_KEY: string;
-  POCKET_TOKEN_KEY: string;
-}> = async ({request, env}) => {
+export const onRequest: PagesFunction<IPocketLetterEnv> = async ({
+  request,
+  env,
+}) => {
   const cookies = Object.fromEntries(
     request.headers
       .get("Cookie")
@@ -32,13 +32,11 @@ export const onRequest: PagesFunction<{
   });
 
   const {username, access_token} = await response.json();
-  const address = `${encrypt(
-    access_token,
-    env.POCKET_TOKEN_KEY,
-  )}@${MAILING_DOMAIN}`;
+  await env.ALIASES.put(username, access_token);
+  const address = `${username}@${MAILING_DOMAIN}`;
 
   return new Response(
-    `Hi ${username}, your PocketLetter address is ${address}`,
+    `Hi ${username}, your just registered your PocketLetter address: ${address}`,
     {
       headers: {
         "Set-Cookie": `${CODE_COOKIE_NAME}=deleted; expires=Thu, 01 Jan 1970 00:00:00 GMT`,

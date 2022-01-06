@@ -9,3 +9,11 @@ export const MAILING_DOMAIN = "to.pocketletter.cc";
 
 export const SIGNING_METHOD = "SHA256";
 export const CODE_COOKIE_NAME = "code";
+
+export type IPocketLetterEnv = {
+  POCKET_CONSUMER_KEY: string;
+  POCKET_TOKEN_KEY: string;
+  SIGNING_SECRET: string;
+  DATA: KVNamespace;
+  ALIASES: KVNamespace;
+};
