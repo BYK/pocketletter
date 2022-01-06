@@ -32,8 +32,9 @@ export const onRequest: PagesFunction<IPocketLetterEnv> = async ({
   });
 
   const {username, access_token} = await response.json();
-  await env.ALIASES.put(username, access_token);
-  const address = `${username}@${MAILING_DOMAIN}`;
+  const alias = username.toLowerCase();
+  await env.ALIASES.put(alias, access_token);
+  const address = `${alias}@${MAILING_DOMAIN}`;
 
   return new Response(
     `Hi ${username}, your just registered your PocketLetter address: ${address}`,
