@@ -32,7 +32,7 @@ export const onRequest: PagesFunction<IPocketLetterEnv> = async ({
   });
 
   const {username, access_token} = await response.json();
-  const alias = username.toLowerCase();
+  const alias = encodeURIComponent(username.toLowerCase());
   await env.ALIASES.put(alias, access_token);
   const address = `${alias}@${MAILING_DOMAIN}`;
 
